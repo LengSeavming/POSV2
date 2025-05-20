@@ -26,10 +26,10 @@ import { SharedDetailsComponent } from 'app/shared/details/details.component';
 import { env } from 'envs/env';
 import { SnackbarService } from 'helper/services/snack-bar/snack-bar.service';
 import GlobalConstants from 'helper/shared/constants';
-import { ProductType } from '../sale/sale.types';
+import { ProductType } from '../sale/sale.types';//
 import { ItemComponent } from './item/item.component';
 import { OrderService } from './order.service';
-import { Data, Product } from './order.types';
+import { Data, Pet, PetData, Product } from './order.types';
 import { ViewDetailSaleComponent } from 'app/shared/view/view.component';
 interface CartItem {
     id: number;
@@ -64,9 +64,12 @@ export class OrderComponent implements OnInit, OnDestroy {
     private _unsubscribeAll: Subject<User> = new Subject<User>();
     fileUrl: string = env.FILE_BASE_URL;
     data: Data[] = [];
+    petdata: PetData[] = [];
+    allPets: Pet[] = [];
     allProducts: Product[] = [];
     isLoading: boolean = false;
     carts: CartItem[] = [];
+    petcarts: CartItem[] = [];
     user: User;
     isOrderBeingMade: boolean = false;
     canSubmit: boolean = false;
@@ -108,10 +111,17 @@ export class OrderComponent implements OnInit, OnDestroy {
                     name: 'All Categories',
                     products: this.allProducts,
                 });
-                if (this.data && this.data.length > 0) {
-                    this.selectedTab = this.data[0]; // Automatically select the first tab
-                    this._changeDetectorRef.detectChanges(); // Manually trigger change detection
-                }
+                // For pets — you need to do the same
+                this.allPets = response.petdata.reduce((all, item) => {
+                    return all.concat(item.pets);
+                }, []);
+                // Add the "ALL" category to the petdata array
+                this.petdata.unshift({
+                    id: 0, // Use a unique id for the "ALL" category
+                    name: 'All Categories',
+                    pets: this.allPets,
+                });
+                
             },
             error: (err) => {
                 this.isLoading = false;
@@ -193,12 +203,47 @@ export class OrderComponent implements OnInit, OnDestroy {
         this.getTotalPrice();
     }
 
+    addToPetCart(incomingPet: Pet, qty = 0): void {
+        // Find an existing item in the cart with the same id as the incoming item
+        const existingPet = this.petcarts.find(
+            (item) => item.id === incomingPet.id
+        );
+
+        if (existingPet) {
+            // If the item already exists, update its quantity and temp_qty
+            existingPet.qty += qty;
+            existingPet.temp_qty = existingPet.qty;
+        } else {
+            // If the item doesn't exist, create a new CartItem and add it to the cart
+            const newPet: CartItem = {
+                id: incomingPet.id,
+                name: incomingPet.name,
+                qty: qty,
+                temp_qty: qty,
+                unit_price: incomingPet.unit_price,
+                image: incomingPet.image,
+                code: incomingPet.code,
+                type: incomingPet.type,
+            };
+            this.carts.push(newPet);
+            // Set canSubmit to true, indicating that there is at least one item in the cart
+            this.canSubmit = true;
+        }
+
+        // Calculate and update the total price of the items in the cart
+        this.getTotalPrice();
+    }
+
     getTotalPrice(): void {
-        // Calculate the total price by iterating over items in the cart and summing the product of quantity and unit price
-        this.totalPrice = this.carts.reduce(
+        const productTotal = this.carts.reduce(
             (total, item) => total + item.qty * item.unit_price,
             0
         );
+        const petTotal = this.petcarts.reduce(
+            (total, item) => total + item.qty * item.unit_price,
+            0
+        );
+        this.totalPrice = productTotal + petTotal;
     }
 
     remove(value: any, index: number = -1): void {
@@ -252,15 +297,21 @@ export class OrderComponent implements OnInit, OnDestroy {
     checkOut(): void {
         // Create a dictionary to represent the cart with item IDs and quantities
         const carts: { [itemId: number]: number } = {};
+        const petcarts: { [itemId: number]: number } = {};
 
         this.carts.forEach((item: CartItem) => {
             carts[item.id] = item.qty;
+        });
+        this.petcarts.forEach((item: CartItem) => {
+            petcarts[item.id] = item.qty;
         });
 
         // Prepare the request body with the serialized cart data
         const body = {
             cart: JSON.stringify(carts),
+            petcart: JSON.stringify(petcarts),
         };
+        
 
         // Set the flag to indicate that an order is being made
         this.isOrderBeingMade = true;
@@ -304,5 +355,6 @@ export class OrderComponent implements OnInit, OnDestroy {
                 );
             },
         });
+
     }
 }

@@ -40,45 +40,90 @@ export interface ProductType {
     name: string;
 }
 
-// //add pet
-// //Interface representing a list of data with pagination information
-// export interface Document {
-//     document: Document[];
-//     pagination: {
-//         currentPage: number;
-//         perPage: number;
-//         totalItems: number;
-//         totalPages: number;
-//     };
-// }
 
-// // Interface representing data for a receipt
-// export interface Document {
-//     id: number;
-//     receipt_number: number;
-//     total_price: number;
-//     ordered_at?: Date;
-//     cashier: { id: number; name: string };
-//     details: Detail[];
-// }
+//Interface representing a list of data with pagination information
+export interface Document {
+    document: Document[];
+    pagination: {
+        currentPage: number;
+        perPage: number;
+        totalItems: number;
+        totalPages: number;
+    };
+}
 
-// // Interface representing details of a product in a receipt
-// export interface Detail {
-//     id: number;
-//     unit_price: number;
-//     qty: number;
-//     pet: Pet;
-// }
+// Interface representing data for a receipt
+export interface Document {
+    id: number;
+    receipt_number: number;
+    total_price: number;
+    ordered_at?: Date;
+    cashier: { id: number; name: string };
+    details: Detail[];
+}
 
-// export interface Pet {
-//     id: number;
-//     name: string;
-//     code: string;
-//     image: string;
-//     type: PetType;
-// }
+// Interface representing a pet within a sales order
+//add pet
+// Interface representing a list of data with pagination information
+export interface List {
+    petdata: PetData[];
+    pagination: {
+        currentPage: number;
+        perPage: number;
+        totalItems: number;
+        totalPages: number;
+    };
+}
 
-// // Interface representing the type of a product
-// export interface PetType {
-//     name: string;
-// }
+// Interface representing data for a receipt
+export interface PetData {
+    id: number;
+    receipt_number: number;
+    total_price: number;
+    ordered_at?: Date;
+    cashier: { id: number; name: string };
+    details: Pet_Detail[];
+}
+
+// Interface representing details of a product in a receipt
+export interface Pet_Detail {
+    id: number;
+    unit_price: number;
+    qty: number;
+    pet: Pet;
+}
+
+export interface Pet {
+    id: number;
+    name: string;
+    code: string;
+    image: string;
+    type: PetType;
+}
+
+// Interface representing the type of a product
+export interface PetType {
+    pet_name: string;
+}
+
+
+//Interface representing a list of data with pagination information
+export interface Pet_Document {
+    document: Pet_Document[];
+    pagination: {
+        currentPage: number;
+        perPage: number;
+        totalItems: number;
+        totalPages: number;
+    };
+}
+
+// Interface representing data for a receipt
+export interface Pet_Document {
+    id: number;
+    receipt_number: number;
+    total_price: number;
+    ordered_at?: Date;
+    cashier: { id: number; name: string };
+    details: Pet_Detail[];
+}

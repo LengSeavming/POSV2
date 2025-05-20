@@ -7,7 +7,7 @@ import { MatIconModule } from '@angular/material/icon';
 
 // ================================================================>> Custom Libraries (Application-specific)
 import { env } from 'envs/env';
-import { Product } from '../order.types';
+import { Pet, Product } from '../order.types';
 
 
 @Component({
@@ -25,11 +25,14 @@ import { Product } from '../order.types';
 export class ItemComponent {
 
     @Input() data: Product;
+    @Input() petdata: Pet;
     @Output() result = new EventEmitter<Product>;
+    // @Output() petresult = new EventEmitter<Pet>;
     public fileUrl: string = env.FILE_BASE_URL;
 
     onOutput() {
         this.result.emit(this.data);
+        // this.petresult.emit(this.petdata);
     }
 
 }

@@ -18,4 +18,26 @@
             {{ data?.unit_price | number }} រៀល
         </p>
     </div>
+
+    <!-- Optional Pet Info -->
+    <div *ngIf="petdata">
+        <div class="overflow-hidden rounded-lg border border-gray-200 dark:border-gray-800">
+            <img class="mx-auto min-h-44 max-h-44 w-44 object-contain dark:hidden scale-90"
+                [src]="petdata?.image ? fileUrl + petdata?.image : 'default-image-url.jpg'" alt="pet image" />
+            <img class="mx-auto hidden max-h-44 w-44 object-contain dark:block"
+                [src]="petdata?.image ? fileUrl + petdata?.image : 'default-image-url.jpg'" alt="pet image" />
+        </div>
+
+        <div>
+            <p class="text-sm text-gray-500 dark:text-gray-300">
+                <span class="text-gray-600 dark:text-gray-300"> {{ petdata?.type.name }} </span>
+            </p>
+            <p class="text-sm text-gray-500 dark:text-gray-300">
+            <span class="text-gray-600 dark:text-gray-300"> {{ petdata?.name }} </span>
+            </p>
+            <p class="text-sm font-medium text-green-600 dark:text-green-400 mt-1">
+                    {{ petdata?.unit_price | number }} $
+            </p>
+        </div>
+    </div>
 </div>

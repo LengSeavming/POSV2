@@ -33,7 +33,7 @@
             <div class="list-pos-left">
                 <!-- Title -->
                 <div class="md:text-3xl font-semibold mt-4 mb-4">
-                    ប្រភេទផលិតផល
+                    ប្រភេទមុខទំនិញ
                 </div>
 
                 <!-- Tab Headers Custom Styling with Tailwind CSS -->
@@ -92,6 +92,18 @@
                                 <span *ngIf="item.products.length === 0"
                                     >គ្មានផលិតផល!!!</span
                                 >
+                                <pet-item
+                                    *ngFor="
+                                        let product of item.products;
+                                        trackBy: trackByProductId
+                                    "
+                                    [data]="product"
+                                    (result)="addToCart($event, 1)"
+                                >
+                                </pet-item>
+                                <span *ngIf="item.pets.length === 0"
+                                    >គ្មានផលិតផល!!!</span
+                                >
                             </div>
                         </div>
                     </mat-tab>
@@ -113,7 +125,19 @@
                             (result)="addToCart($event, 1)"
                         >
                         </product-item>
+                        <pet-item
+                            *ngFor="
+                                let product of selectedTab.products;
+                                trackBy: trackByProductId
+                            "
+                            [data]="product"
+                            (result)="addToCart($event, 1)"
+                        >
+                        </pet-item>
                         <span *ngIf="selectedTab.products.length === 0"
+                            >គ្មានផលិតផល!!!</span
+                        >
+                        <span *ngIf="selectedTab.pets.length === 0"
                             >គ្មានផលិតផល!!!</span
                         >
                     </div>

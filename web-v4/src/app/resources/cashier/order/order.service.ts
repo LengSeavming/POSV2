@@ -31,6 +31,20 @@ export class OrderService {
         );
     }
 
+    // Method to fetch a list of pets from the POS system
+    petlist(): Observable<List> {
+        return this.httpClient.get<List>(`${env.API_BASE_URL}/cashier/ordering/pets`, {
+            headers: new HttpHeaders().set('Content-Type', 'application/json'),
+        }).pipe(
+            catchError((error) => {
+                // Handle error by returning a new observable that throws the error
+                return throwError(() => error);
+            }),
+            tap((response: List) => {
+            })
+        );
+    }
+
     create(body: { cart: string; platform?: string }): Observable<ResponseOrder> {
         // Set default platform to "Web" if not provided
         const { cart, platform = 'Web' } = body;
@@ -42,6 +56,23 @@ export class OrderService {
 
         return this.httpClient.post<ResponseOrder>(
             `${env.API_BASE_URL}/cashier/ordering/order`,
+            requestBody,
+            {
+                headers: new HttpHeaders({ 'Content-Type': 'application/json' }),
+            }
+        );
+    }
+    //Add Pet Orders
+    createPetOrder(body: { petcart: string; platform?: string }): Observable<ResponseOrder> {
+        const { petcart, platform = 'Web' } = body;
+
+        const requestBody = {
+            petcart,
+            platform,
+        };
+
+        return this.httpClient.post<ResponseOrder>(
+            `${env.API_BASE_URL}/cashier/ordering/order/pet`,
             requestBody,
             {
                 headers: new HttpHeaders({ 'Content-Type': 'application/json' }),
